@@ -3,8 +3,9 @@
 // For free use
 
 var interval, desiredDate, desiredDateMilliseconds, extensionId;
+console.log('yuhuu');
 
-function scrollSc() {
+/*function scrollSc() {
     scrollTo({
         'top': document.body.scrollHeight
     });
@@ -30,26 +31,27 @@ function scrollSc() {
             }
         }
     }
-}
+}*/
 
 /**
  * Notifies extension about stopped scrolling
  */
-function notifyExtensionScrollingStopped(){
+/*function notifyExtensionScrollingStopped(){
     chrome.runtime.sendMessage({'message': 'stopped'});
-}
+}*/
 
 // Listen for messages from extension
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
+/*chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
     if(request.message == 'stop') {
         // Cancel scrolling
         clearInterval(interval);
         // Notify extension
         notifyExtensionScrollingStopped();
     }
-});
+});*/
 
 // First get the dates
+/*
 chrome.storage.sync.get('desiredDate', (items) => {
     desiredDate = items['desiredDate'];
     desiredDateMilliseconds = new Date(desiredDate).getTime();
@@ -76,4 +78,16 @@ chrome.storage.sync.get('desiredDate', (items) => {
         // Start scrolling down the page
         interval = setInterval(scrollSc, 100);
     }
-});
+});*/
+
+/**
+   * Listen for messages from the background script.
+   * Call "beastify()" or "reset()".
+  */
+  browser.runtime.onMessage.addListener((message) => {
+      if (message.command === "search") {
+        console.log('searching...');
+      } else if (message.command === "stop") {
+        console.log('stopping...');
+      }
+  });

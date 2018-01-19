@@ -1,4 +1,4 @@
-// Copyright (c) 2017, Ralph Metel. All rights reserved.
+// Copyright (c) 2018, Ralph Metel. All rights reserved.
 
 var ago = $('#ago'),
     dropdownLang = $('#dropdownLang'),
@@ -231,6 +231,30 @@ function init() {
         });
     });
 
+    // Submit button listener
+    submitButton.on('click', (e) => {
+        debugger;
+        e.preventDefault();
+        var desiredDate = calcDate(dropdownDays.val() + "_" + dropdownPeriod.val());
+        //if(url.indexOf("soundcloud.com/stream") > -1){
+            browser.tabs.query({active: true, currentWindow: true}, (_tabs) => {
+                browser.tabs.sendMessage(_tabs[0].id, {
+                    message: "search"
+                });
+              }
+            );
+            /*chrome.storage.sync.set({desiredDate: desiredDate}, () => {
+                if(!isRunning) {
+                    isRunning = true;
+                    chrome.tabs.executeScript({file: 'soundcloud-scroll-down.js'});
+                    submitButton.html(texts.cancel[selectedLanguage]);
+                } else {
+                    chrome.tabs.sendMessage(tab.id, {'message': 'stop'});
+                }
+            });*/
+        //}
+    });
+
     // Language dropdown listener
     dropdownLang.on('change', (e) => {{}
         selectedLanguage = e.target.value;
@@ -263,4 +287,11 @@ function getStorage(param, callback) {
     callback(param == 'language' ? selectedLanguage : (param == 'period' ? selectedPeriod : selectedDate));
 }
 
-init();
+/**
+ * When the popup loads, inject a content script into the active tab,
+ * and add a click handler.
+ * If we couldn't inject the script, handle the error.
+ */
+browser.tabs.executeScript({file: "/soundcloud-scroll-down.js"})
+.then(init)
+.catch((err) => {console.log(err)});
