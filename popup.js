@@ -284,7 +284,7 @@ function getStorage(param, callback) {
 
 function startSearch(tabs) {
     browser.tabs.sendMessage(tabs[0].id, {
-        message: "search"
+        command: "search"
     });
 }
 
