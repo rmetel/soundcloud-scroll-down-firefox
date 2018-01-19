@@ -238,12 +238,7 @@ function init() {
         var desiredDate = calcDate(dropdownDays.val() + "_" + dropdownPeriod.val());
         //if(url.indexOf("soundcloud.com/stream") > -1){
             browser.tabs.query({active: true, currentWindow: true})
-            .then(tabs) => {
-                browser.tabs.sendMessage(tabs[0].id, {
-                    message: "search"
-                });
-              }
-            );
+            .then(startSearch);
             /*chrome.storage.sync.set({desiredDate: desiredDate}, () => {
                 if(!isRunning) {
                     isRunning = true;
@@ -286,6 +281,12 @@ function init() {
 
 function getStorage(param, callback) {
     callback(param == 'language' ? selectedLanguage : (param == 'period' ? selectedPeriod : selectedDate));
+}
+
+function startSearch(tabs) {
+    browser.tabs.sendMessage(tabs[0].id, {
+        message: "search"
+    });
 }
 
 /**
