@@ -237,8 +237,9 @@ function init() {
         e.preventDefault();
         var desiredDate = calcDate(dropdownDays.val() + "_" + dropdownPeriod.val());
         //if(url.indexOf("soundcloud.com/stream") > -1){
-            browser.tabs.query({active: true, currentWindow: true}, (_tabs) => {
-                browser.tabs.sendMessage(_tabs[0].id, {
+            browser.tabs.query({active: true, currentWindow: true})
+            .then(tabs) => {
+                browser.tabs.sendMessage(tabs[0].id, {
                     message: "search"
                 });
               }
