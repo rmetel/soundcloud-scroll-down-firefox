@@ -233,7 +233,6 @@ function init() {
 
     // Submit button listener
     submitButton.on('click', (e) => {
-        debugger;
         e.preventDefault();
         var desiredDate = calcDate(dropdownDays.val() + "_" + dropdownPeriod.val());
         //if(url.indexOf("soundcloud.com/stream") > -1){
