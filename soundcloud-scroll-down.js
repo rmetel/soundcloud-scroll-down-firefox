@@ -2,10 +2,9 @@
 // Email: ralph.metel@gmail.com
 // For free use
 
-var interval, desiredDate, desiredDateMilliseconds, extensionId;
-console.log('yuhuu');
+var interval, desiredDateMilliseconds;
 
-/*function scrollSc() {
+function scrollPage() {
     scrollTo({
         'top': document.body.scrollHeight
     });
@@ -31,7 +30,7 @@ console.log('yuhuu');
             }
         }
     }
-}*/
+}
 
 /**
  * Notifies extension about stopped scrolling
@@ -50,15 +49,15 @@ console.log('yuhuu');
     }
 });*/
 
-// First get the dates
-/*
-chrome.storage.sync.get('desiredDate', (items) => {
-    desiredDate = items['desiredDate'];
-    desiredDateMilliseconds = new Date(desiredDate).getTime();
-
+/**
+ * Init function
+ */
+function initSearch(desiredDate) {
     var allPosts = document.getElementsByClassName('relativeTime'),
         lastPost = allPosts[allPosts.length - 1],
         lastPostDateMilliseconds = new Date(lastPost.getAttribute('datetime')).getTime();
+
+    desiredDateMilliseconds = new Date(desiredDate).getTime();
 
     // If last post date is smaller than the desired date (last post is older that the desired one), it means the needed item is already on page
     if (lastPostDateMilliseconds <= desiredDateMilliseconds) {
@@ -73,21 +72,20 @@ chrome.storage.sync.get('desiredDate', (items) => {
             }
         }
         // Notify extension
-        notifyExtensionScrollingStopped();
+        //notifyExtensionScrollingStopped();
     } else {
         // Start scrolling down the page
-        interval = setInterval(scrollSc, 100);
+        interval = setInterval(scrollPage, 100);
     }
-});*/
+}
 
 /**
-   * Listen for messages from the background script.
-   * Call "beastify()" or "reset()".
-  */
-  browser.runtime.onMessage.addListener((message) => {
-      if (message.command === "search") {
-        console.log('searching...');
-      } else if (message.command === "stop") {
+ * Listen for messages from the background script.
+ */
+browser.runtime.onMessage.addListener((message) => {
+    if (message.command === "search") {
+        initSearch(message.desiredDate);
+    } else if (message.command === "stop") {
         console.log('stopping...');
-      }
-  });
+    }
+});

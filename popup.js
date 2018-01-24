@@ -1,6 +1,7 @@
 // Copyright (c) 2018, Ralph Metel. All rights reserved.
 
 var ago = $('#ago'),
+    desiredDate = 0,
     dropdownLang = $('#dropdownLang'),
     dropdownPeriod = $('#dropdownPeriod'),
     dropdownDays = $('#dropdownDays'),
@@ -234,7 +235,7 @@ function init() {
     // Submit button listener
     submitButton.on('click', (e) => {
         e.preventDefault();
-        var desiredDate = calcDate(dropdownDays.val() + "_" + dropdownPeriod.val());
+        desiredDate = calcDate(dropdownDays.val() + "_" + dropdownPeriod.val());
         //if(url.indexOf("soundcloud.com/stream") > -1){
             browser.tabs.query({active: true, currentWindow: true})
             .then(startSearch);
@@ -284,7 +285,8 @@ function getStorage(param, callback) {
 
 function startSearch(tabs) {
     browser.tabs.sendMessage(tabs[0].id, {
-        command: "search"
+        command: "search",
+        desiredDate: desiredDate
     });
 }
 
