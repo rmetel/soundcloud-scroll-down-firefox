@@ -35,19 +35,9 @@ function scrollPage() {
 /**
  * Notifies extension about stopped scrolling
  */
-/*function notifyExtensionScrollingStopped(){
-    chrome.runtime.sendMessage({'message': 'stopped'});
-}*/
-
-// Listen for messages from extension
-/*chrome.runtime.onMessage.addListener(function(request, sender, sendResponse){
-    if(request.message == 'stop') {
-        // Cancel scrolling
-        clearInterval(interval);
-        // Notify extension
-        notifyExtensionScrollingStopped();
-    }
-});*/
+function notifyExtensionScrollingStopped(){
+    browser.runtime.sendMessage({'message': 'stopped'});
+}
 
 /**
  * Init function
@@ -72,7 +62,7 @@ function initSearch(desiredDate) {
             }
         }
         // Notify extension
-        //notifyExtensionScrollingStopped();
+        notifyExtensionScrollingStopped();
     } else {
         // Start scrolling down the page
         interval = setInterval(scrollPage, 100);
@@ -86,6 +76,9 @@ browser.runtime.onMessage.addListener((message) => {
     if (message.command === "search") {
         initSearch(message.desiredDate);
     } else if (message.command === "stop") {
-        console.log('stopping...');
+        // Cancel scrolling
+        clearInterval(interval);
+        // Notify extension
+        notifyExtensionScrollingStopped();
     }
 });

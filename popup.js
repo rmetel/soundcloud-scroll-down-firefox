@@ -237,17 +237,17 @@ function init() {
         e.preventDefault();
         desiredDate = calcDate(dropdownDays.val() + "_" + dropdownPeriod.val());
         //if(url.indexOf("soundcloud.com/stream") > -1){
-            browser.tabs.query({active: true, currentWindow: true})
-            .then(startSearch);
-            /*chrome.storage.sync.set({desiredDate: desiredDate}, () => {
+            /*chrome.storage.sync.set({desiredDate: desiredDate}, () => {*/
                 if(!isRunning) {
                     isRunning = true;
-                    chrome.tabs.executeScript({file: 'soundcloud-scroll-down.js'});
+                    browser.tabs.query({active: true, currentWindow: true})
+                    .then(startSearch);
                     submitButton.html(texts.cancel[selectedLanguage]);
                 } else {
-                    chrome.tabs.sendMessage(tab.id, {'message': 'stop'});
+                    browser.tabs.query({active: true, currentWindow: true})
+                    .then(stopSearch);
                 }
-            });*/
+            /*});*/
         //}
     });
 
@@ -290,6 +290,12 @@ function startSearch(tabs) {
     });
 }
 
+function stopSearch(tabs) {
+    browser.tabs.sendMessage(tabs[0].id, {
+        command: "stop"
+    });
+}
+
 /**
  * When the popup loads, inject a content script into the active tab,
  * and add a click handler.
@@ -298,3 +304,10 @@ function startSearch(tabs) {
 browser.tabs.executeScript({file: "/soundcloud-scroll-down.js"})
 .then(init)
 .catch((err) => {console.log(err)});
+
+browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if(request.message == "stopped") {
+         submitButton.html(texts.search[selectedLanguage]);
+         isRunning = false;
+    }
+});
