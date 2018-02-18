@@ -76,6 +76,7 @@ browser.runtime.onMessage.addListener((message) => {
     if (message.command === "search") {
         initSearch(message.desiredDate);
     } else if (message.command === "stop") {
+        console.log('stop command received!');
         // Cancel scrolling
         clearInterval(interval);
         // Notify extension

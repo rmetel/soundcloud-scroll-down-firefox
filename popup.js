@@ -225,8 +225,9 @@ function init() {
                 fillDropdownDays(selectedLanguage);
                 if(date) {
                     selectedDate = date;
-                    dropdownDays.val(selectedDate);
+                    if(selectedPeriod == 'm' && selectedDate > 12) selectedDate = 1;
                 }
+                dropdownDays.val(selectedDate);
                 changeTexts(selectedLanguage);
             });
         });
@@ -237,50 +238,52 @@ function init() {
         e.preventDefault();
         desiredDate = calcDate(dropdownDays.val() + "_" + dropdownPeriod.val());
         //if(url.indexOf("soundcloud.com/stream") > -1){
-            /*chrome.storage.sync.set({desiredDate: desiredDate}, () => {*/
-                if(!isRunning) {
-                    isRunning = true;
-                    browser.tabs.query({active: true, currentWindow: true})
-                    .then(startSearch);
-                    submitButton.html(texts.cancel[selectedLanguage]);
-                } else {
-                    browser.tabs.query({active: true, currentWindow: true})
-                    .then(stopSearch);
-                }
-            /*});*/
+            if(!isRunning) {
+                isRunning = true;
+                browser.tabs.query({active: true, currentWindow: true})
+                .then(startSearch);
+                submitButton.html(texts.cancel[selectedLanguage]);
+            } else {
+                browser.tabs.query({active: true, currentWindow: true})
+                .then(stopSearch);
+            }
         //}
     });
 
     // Language dropdown listener
     dropdownLang.on('change', (e) => {{}
         selectedLanguage = e.target.value;
-//        chrome.storage.sync.set({language: selectedLanguage}, () => {
+        browser.storage.sync.set({language: selectedLanguage}, () => {
             fillDropdownPeriod(selectedLanguage);
             dropdownPeriod.val(selectedPeriod);
             fillDropdownDays(selectedLanguage);
             dropdownDays.val(selectedDate);
             changeTexts(selectedLanguage);
-//        });
+        });
     });
 
     // Date dropdown listener
     dropdownPeriod.on('change', (e) => {{}
         selectedPeriod = e.target.value;
-//        chrome.storage.sync.set({period: selectedPeriod}, () => {});
-        fillDropdownDays(selectedLanguage);
-        changeTexts(selectedLanguage);
+        browser.storage.sync.set({period: selectedPeriod}, () => {
+            fillDropdownDays(selectedLanguage);
+            changeTexts(selectedLanguage);
+        });
     });
 
     // Date dropdown listener
     dropdownDays.on('change', (e) => {{}
         selectedDate = e.target.value;
-//        chrome.storage.sync.set({date: selectedDate}, () => {});
-        changeTexts(selectedLanguage);
+        browser.storage.sync.set({date: selectedDate}, () => {
+            changeTexts(selectedLanguage);
+        });
     });
 }
 
 function getStorage(param, callback) {
-    callback(param == 'language' ? selectedLanguage : (param == 'period' ? selectedPeriod : selectedDate));
+    browser.storage.sync.get(param, (items) => {
+        callback(items[param]);
+    });
 }
 
 function startSearch(tabs) {
